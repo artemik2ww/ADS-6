@@ -1,5 +1,3 @@
-// Copyright 2021 NNTU-CS
-
 #ifndef INCLUDE_TPQUEUE_H_
 #define INCLUDE_TPQUEUE_H_
 
@@ -7,10 +5,10 @@ template <class T>
 class TPQueue {
  private:
   struct Node {
-    T data;
+    T value;
     Node* next;
 
-    explicit Node(const T& value) : data(value), next(nullptr) {}
+    Node(const T& val, Node* nxt = nullptr) : value(val), next(nxt) {}
   };
 
   Node* head;
@@ -20,20 +18,16 @@ class TPQueue {
 
   ~TPQueue() {
     while (head != nullptr) {
-      Node* tmp = head;
+      Node* temp = head;
       head = head->next;
-      delete tmp;
+      delete temp;
     }
-  }
-
-  bool isEmpty() const {
-    return head == nullptr;
   }
 
   void push(const T& value) {
     Node* node = new Node(value);
 
-    if (head == nullptr || value.prior > head->data.prior) {
+    if (head == nullptr || value.prior > head->value.prior) {
       node->next = head;
       head = node;
       return;
@@ -42,7 +36,7 @@ class TPQueue {
     Node* current = head;
 
     while (current->next != nullptr &&
-           current->next->data.prior >= value.prior) {
+           current->next->value.prior >= value.prior) {
       current = current->next;
     }
 
@@ -51,14 +45,18 @@ class TPQueue {
   }
 
   T pop() {
-    T result = head->data;
+    T result = head->value;
 
-    Node* tmp = head;
+    Node* temp = head;
     head = head->next;
-    delete tmp;
+    delete temp;
 
     return result;
   }
+
+  bool isEmpty() const {
+    return head == nullptr;
+  }
 };
 
-#endif  // INCLUDE_TPQUEUE_H_
+#endif
