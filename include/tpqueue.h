@@ -10,47 +10,53 @@ class TPQueue {
   struct Node {
     T data;
     Node* next;
-    Node() : data(), next(nullptr) {}
-    explicit Node(const T& value) : data(value), next(nullptr) {}
+
+    explicit Node(const T& val) : data(val), next(nullptr) {}
   };
 
-  Node* head;
+  Node* listHead;
 
  public:
-  TPQueue() {
-    head = new Node();
-  }
+  TPQueue() : listHead(nullptr) {}
 
   ~TPQueue() {
-    while (head != nullptr) {
-      Node* temp = head;
-      head = head->next;
-      delete temp;
+    while (listHead != nullptr) {
+      Node* itemToDelete = listHead;
+      listHead = listHead->next;
+      delete itemToDelete;
     }
   }
 
   void push(const T& element) {
-    Node* newNode = new Node(element);
-    Node* current = head;
+    Node* insertedNode = new Node(element);
 
-    while (current->next != nullptr && current->next->data.prior >= element.prior) {
-      current = current->next;
+    if (listHead == nullptr || element.prior > listHead->data.prior) {
+      insertedNode->next = listHead;
+      listHead = insertedNode;
+      return;
     }
-    newNode->next = current->next;
-    current->next = newNode;
+
+    Node* iterator = listHead;
+    while (iterator->next != nullptr &&
+           iterator->next->data.prior >= element.prior) {
+      iterator = iterator->next;
+    }
+
+    insertedNode->next = iterator->next;
+    iterator->next = insertedNode;
   }
 
   T pop() {
-    if (head->next == nullptr) {
+    if (listHead == nullptr) {
       throw std::out_of_range("Queue is empty");
     }
-    Node* targetNode = head->next;
-    T value = targetNode->data;
+
+    Node* topNode = listHead;
+    T resultValue = topNode->data;
+    listHead = listHead->next;
     
-    head->next = targetNode->next;
-    delete targetNode;
-    
-    return value;
+    delete topNode;
+    return resultValue;
   }
 };
 
