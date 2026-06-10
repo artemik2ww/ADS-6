@@ -10,52 +10,46 @@ class TPQueue {
   struct Node {
     T data;
     Node* next;
-
+    Node() : data(), next(nullptr) {}
     explicit Node(const T& value) : data(value), next(nullptr) {}
   };
 
   Node* head;
 
  public:
-  TPQueue() : head(nullptr) {}
+  TPQueue() {
+    head = new Node();
+  }
 
   ~TPQueue() {
     while (head != nullptr) {
-      Node* tmp = head;
+      Node* temp = head;
       head = head->next;
-      delete tmp;
+      delete temp;
     }
   }
 
-  void push(const T& value) {
-    Node* node = new Node(value);
-
-    if (head == nullptr || value.prior > head->data.prior) {
-      node->next = head;
-      head = node;
-      return;
-    }
-
+  void push(const T& element) {
+    Node* newNode = new Node(element);
     Node* current = head;
-    while (current->next != nullptr &&
-           current->next->data.prior >= value.prior) {
+
+    while (current->next != nullptr && current->next->data.prior >= element.prior) {
       current = current->next;
     }
-
-    node->next = current->next;
-    current->next = node;
+    newNode->next = current->next;
+    current->next = newNode;
   }
 
   T pop() {
-    if (head == nullptr) {
-      throw std::out_of_range("TPQueue is empty");
+    if (head->next == nullptr) {
+      throw std::out_of_range("Queue is empty");
     }
-
-    Node* tmp = head;
-    T value = tmp->data;
-    head = head->next;
-    delete tmp;
-
+    Node* targetNode = head->next;
+    T value = targetNode->data;
+    
+    head->next = targetNode->next;
+    delete targetNode;
+    
     return value;
   }
 };
