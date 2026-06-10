@@ -54,7 +54,6 @@ class TPQueue {
     Node* topNode = listHead;
     T resultValue = topNode->data;
     listHead = listHead->next;
-    
     delete topNode;
     return resultValue;
   }
